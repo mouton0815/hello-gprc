@@ -1,0 +1,16 @@
+{
+  "name": "client-nodejs",
+  "version": "1.0.0",
+  "type": "commonjs",
+  "main": "client.js",
+  "scripts": {
+    "start": "node client.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@grpc/grpc-js": "^1.10.7",
+    "@grpc/proto-loader": "^0.7.13",
+    "google-protobuf": "^3.21.2"
+  }
+}
