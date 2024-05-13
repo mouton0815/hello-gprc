@@ -2,15 +2,16 @@
   "name": "client-nodejs",
   "version": "1.0.0",
   "type": "commonjs",
-  "main": "client.js",
+  "main": "client.ts",
   "scripts": {
-    "start": "node client.js"
+    "start": "node client.ts"
   },
-  "author": "",
   "license": "ISC",
+  "devDependencies": {
+    "ts-proto": "^1.174.0",
+    "typescript": "^5.4.5"
+  },
   "dependencies": {
-    "@grpc/grpc-js": "^1.10.7",
-    "@grpc/proto-loader": "^0.7.13",
-    "google-protobuf": "^3.21.2"
+    "@grpc/grpc-js": "^1.10.7"
   }
 }
