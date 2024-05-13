@@ -1,5 +1,7 @@
 *.pb.*
 *_pb.*
+*.js
+**/proto/*.ts
 package-lock.json
 node_modules
 
