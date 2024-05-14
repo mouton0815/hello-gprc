@@ -84,8 +84,32 @@ Then, the complete compiler call is a follows:
 ```shell
 protoc --js_out=import_style=commonjs,binary:client-nodejs --grpc_out=client-nodejs --plugin=protoc-gen-grpc=`which grpc_tools_node_protoc_plugin` proto/hello.proto
 ```
-The plugin syntax is described in article [Creating a gRPC server and client with Node.js and TypeScript](https://medium.com/nerd-for-tech/creating-a-grpc-server-and-client-with-node-js-and-typescript-bb804829fada),
-which unfortunately doesn't mention the need for global instalations of `protoc-gen-js` and `grpc-tools`.
+The compiler can output code that uses either closure-style or CommonJS-style imports (as used in the `protoc` call above).
+The [project page](https://github.com/protocolbuffers/protobuf-javascript) states that
+> Support for ES6-style imports is not implemented yet.
+
+This leads to generated code that is hard to read for users of modern JavaScript.
+Moreover, the generated CommonJS code cannot be easily combined with ([ECMAScript modules](https://nodejs.org/api/esm.html)
+(i.e. projects specified as `"type": "module"` in the `package.json`).
+For this reason, the example client below also uses the CommonJS format:
+
+```javascript
+const { credentials } = require('@grpc/grpc-js')
+const { GreeterClient } = require('./proto/hello_grpc_pb')
+const { HelloRequest } = require('./proto/hello_pb')
+
+const client = new GreeterClient('localhost:5005', credentials.createInsecure())
+const request = new HelloRequest()
+request.setName('Hans')
+
+client.sayHello(request, (error, response) => {
+    console.log(error ? error : response.getMessage())
+})
+```
+An escape from downgrading an entire project to CommonJS is to use a preprocessor. 
+A TypeScript compiler is one possible preprocessor. 
+This is the approach chosen in article [Creating a gRPC server and client with Node.js and TypeScript](https://medium.com/nerd-for-tech/creating-a-grpc-server-and-client-with-node-js-and-typescript-bb804829fada).
+It also describes the plugin syntax of `protoc` in more detail.
 
 ### Static Generation with `protoc-gen-grpc`
 The need for three global installations (`protoc`, `protoc-gen-js`, and `grpc-tools`)
@@ -105,25 +129,32 @@ As a nice add-on, the package can also generate TypeScript signatures:
 ```shell
 protoc-gen-grpc-ts --ts_out=client-nodejs  proto/hello.proto
 ```
+This simplifies the integration of the generated code into TypeScript clients:
+```typescript
+import { credentials } from '@grpc/grpc-js'
+import { GreeterClient } from './proto/hello_grpc_pb'
+import { HelloRequest } from './proto/hello_pb'
+
+const client = new GreeterClient('localhost:5005', credentials.createInsecure())
+const request = new HelloRequest()
+request.setName('Hans')
+
+client.sayHello(request, (error, response) => {
+    console.log(error ? error : response.getMessage())
+})
+```
 
 ### Static Generation with `ts-proto`
-All variants discussed so far use the built-in JavaScript generation of `protoc`.
-There are different options for the output format. CommonJS appears the most modern one,
-because, as the [project page](https://github.com/protocolbuffers/protobuf-javascript) states
-> Support for ES6-style imports is not implemented yet.
-
-This leads to generated code that is hard to read for users of modern JavaScript.
-In addition, the use of `require` makes it difficult to integrate the generated code into
-[ECMAScript modules](https://nodejs.org/api/esm.html), i.e. projects specified as
-`"type": "module"` in the `package.json`.
+All variants discussed so far use the built-in JavaScript generation of `protoc`,
+with the consequence that the output format is ancient CommonJS (although optionally with TypeScript signatures).
 
 Project [ts-proto](https://github.com/stephenh/ts-proto) goes a radically different way
-and replaces the built-in JavaScript generation of `protoc` by a TypeScript generator.
-It still uses [protobufjs](https://www.npmjs.com/package/protobufjs) internally, apparently for reading `.proto` files.
-However, the generated code is quite different from the variants discussed so far, with a different API
-(for example, there are no getters and setters, just fields).
-The differences are a great opportunity for easier integration into your target projects,
-but there is also a risk in becoming dependent on `ts-proto`.
+and replaces the built-in CommonJS generator by a TypeScript generator.
+The generated code varies substantially from the [protobufjs](https://www.npmjs.com/package/protobufjs)-based code,
+with incompatible signatures of the exported types and functions (for example, there are no getters and setters, just fields).
+
+The increased cleanness of the generated code makes the integration into your target projects simpler,
+but there is also a risk in becoming too dependent on `ts-proto`.
 
 Only one package needs to be installed:
 ```shell
@@ -137,13 +168,14 @@ protoc --plugin=./client-nodejs/node_modules/.bin/protoc-gen-ts_proto --ts_proto
 ```
 All code is written to one idiomatic Typescript file.
 
-A toy gRPC client can be as simple as
+The corresponding integration into code is even simpler as in the example above (note the `create` factory):
 ```typescript
-import * as grpc from '@grpc/grpc-js'
+import { credentials } from '@grpc/grpc-js'
 import { GreeterClient, HelloRequest } from './proto/hello'
 
 const client = new GreeterClient('localhost:5005', grpc.credentials.createInsecure())
 const request = HelloRequest.create({ name: 'Hans' })
+
 client.sayHello(request, (error, response) => {
     console.log(error ? error : response.message)
 })
