@@ -113,20 +113,43 @@ because, as the [project page](https://github.com/protocolbuffers/protobuf-javas
 > Support for ES6-style imports is not implemented yet.
 
 This leads to generated code that is hard to read for users of modern JavaScript.
-Moreover, the use of `require` makes it hard to integrate the generated code into
-[ECMAScript modules](https://nodejs.org/api/esm.html), i.e. projects marked with
-`"type": "module"` in the `package.json`. 
+In addition, the use of `require` makes it difficult to integrate the generated code into
+[ECMAScript modules](https://nodejs.org/api/esm.html), i.e. projects specified as
+`"type": "module"` in the `package.json`.
 
 Project [ts-proto](https://github.com/stephenh/ts-proto) goes a radically different way
 and replaces the built-in JavaScript generation of `protoc` by a TypeScript generator.
+It still uses [protobufjs](https://www.npmjs.com/package/protobufjs) internally, apparently for reading `.proto` files.
+However, the generated code is quite different from the variants discussed so far, with a different API
+(for example, there are no getters and setters, just fields).
+The differences are a great opportunity for easier integration into your target projects,
+but there is also a risk in becoming dependent on `ts-proto`.
 
 Only one package needs to be installed:
 ```shell
 npm install ts-code
 ```
-The generator has a wealth of options, including one that generates gRPC service definitions and stubs:
+The generator is passed as plugin to `protoc`.
+It provides a wealth of extra options, including one that generates gRPC service definitions and stubs:
 
 ```shell
 protoc --plugin=./client-nodejs/node_modules/.bin/protoc-gen-ts_proto --ts_proto_out=client-nodejs --ts_proto_opt=outputServices=grpc-js proto/hello.proto
 ```
-All code is written to one idiomatic Typescript file. 
+All code is written to one idiomatic Typescript file.
+
+A toy gRPC client can be as simple as
+```typescript
+import * as grpc from '@grpc/grpc-js'
+import { GreeterClient, HelloRequest } from './proto/hello'
+
+const client = new GreeterClient('localhost:5005', grpc.credentials.createInsecure())
+const request = HelloRequest.create({ name: 'Hans' })
+client.sayHello(request, (error, response) => {
+    console.log(error ? error : response.message)
+})
+```
+Unfortunately, the generated functions use callbacks.
+A promise-based API would be more elegant and would fit better with the clean Typescript approach.
+
+Many more details of creating gRCP server and client applications with `ts-proto` are provided
+by article [NodeJS Microservice with gRPC and TypeScript](https://rsbh.dev/blogs/grpc-with-nodejs-typescript).
