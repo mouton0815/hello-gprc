@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
-	"grpc_go/main/internal"
+	"grpc_go/main/proto"
 	"io"
 	"log"
 	"time"
@@ -19,19 +19,19 @@ func main() {
 	defer func(conn *grpc.ClientConn) {
 		_ = conn.Close()
 	}(conn)
-	client := internal.NewGreeterClient(conn)
+	client := proto.NewGreeterClient(conn)
 
 	// First say hello
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
 	defer cancel()
-	hello, err := client.SayHello(ctx, &internal.HelloRequest{Name: "Client"})
+	hello, err := client.SayHello(ctx, &proto.HelloRequest{Name: "Client"})
 	if err != nil {
 		panic(fmt.Sprintf("Could not greet: %v", err))
 	}
 	log.Println(hello.GetMessage())
 
 	// Now fetch the names stream from the server
-	stream, err := client.GetNames(ctx, &internal.NameRequest{Count: 7})
+	stream, err := client.GetNames(ctx, &proto.NameRequest{Count: 7})
 	if err != nil {
 		panic(fmt.Sprintf("Could not stream: %v", err))
 	}

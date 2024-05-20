@@ -4,7 +4,7 @@ import (
 	"context"
 	"fmt"
 	"google.golang.org/grpc"
-	"grpc-go/main/internal"
+	"grpc-go/main/proto"
 	"log"
 	"math/rand"
 	"net"
@@ -26,15 +26,15 @@ var NAMES = []string{
 type GreeterServerImpl struct {
 }
 
-func (GreeterServerImpl) SayHello(_ context.Context, req *internal.HelloRequest) (*internal.HelloReply, error) {
-	return &internal.HelloReply{Message: "Hello " + req.GetName()}, nil
+func (GreeterServerImpl) SayHello(_ context.Context, req *proto.HelloRequest) (*proto.HelloReply, error) {
+	return &proto.HelloReply{Message: "Hello " + req.GetName()}, nil
 }
 
-func (GreeterServerImpl) GetNames(req *internal.NameRequest, server internal.Greeter_GetNamesServer) error {
+func (GreeterServerImpl) GetNames(req *proto.NameRequest, server proto.Greeter_GetNamesServer) error {
 	log.Printf("Start streaming %d names", req.Count)
 	for i := 0; i < int(req.Count); i++ {
 		name := NAMES[rand.Intn(len(NAMES))]
-		reply := internal.NameReply{Name: name}
+		reply := proto.NameReply{Name: name}
 		if err := server.Send(&reply); err != nil {
 			log.Println("error generating response")
 			return err
@@ -49,7 +49,7 @@ func main() {
 		log.Fatalf("failed to listen: %v", err)
 	}
 	s := grpc.NewServer()
-	internal.RegisterGreeterServer(s, &GreeterServerImpl{})
+	proto.RegisterGreeterServer(s, &GreeterServerImpl{})
 	log.Printf("server listening at %v", lis.Addr())
 	if err := s.Serve(lis); err != nil {
 		log.Fatalf("failed to serve: %v", err)
