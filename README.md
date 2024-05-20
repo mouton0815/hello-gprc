@@ -1,22 +1,41 @@
-# Playing with gRPC
+# Playing with gRPC and Go
+A simple gRPC server and client that demonstrates
+* A basic request-response pattern (method `SayHello`)
+* A streaming response triggered by a unary request (method `GetNames`)
 
+The streaming variant is a modification of the example used in the article
+[Implementing gRPC with Golang](https://medium.com/@josueparra2892/implementing-grpc-with-golang-71bd72a4561).
 
-# Installation
+## Installation
 
-You need `protoc`, the Protocol Buffer compiler.
-Please follow the instructions on https://grpc.io/docs/protoc-installation/.
+You need
+* `Go` (https://go.dev/doc/install)
+* `protoc` (https://grpc.io/docs/protoc-installation)
 
-
-
-## Go
-https://grpc.io/docs/languages/go/quickstart/
-
+To enable `protoc` to generate Go code, you need two additional plugins:
 ```shell
 go install google.golang.org/protobuf/cmd/protoc-gen-go@v1.28
 go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@v1.2
-export PATH="$PATH:$(go env GOPATH)/bin"
 ```
+
+See https://grpc.io/docs/languages/go/quickstart/ for more information.
+
+## Code Generation
+
 ```shell
 protoc --go_out=server --go-grpc_out=require_unimplemented_servers=false:server hello.proto
 protoc --go_out=client --go-grpc_out=client hello.proto
+```
+
+## Running
+Run the server:
+```shell
+cd server
+go run main.go
+```
+
+Run the client (in another shell):
+```shell
+cd client
+go run main.go
 ```
