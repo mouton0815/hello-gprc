@@ -10,7 +10,6 @@ import (
 )
 
 type GreeterServerImpl struct {
-	internal.UnimplementedGreeterServer
 }
 
 func (GreeterServerImpl) SayHello(_ context.Context, req *internal.HelloRequest) (*internal.HelloReply, error) {

@@ -17,6 +17,6 @@ go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@v1.2
 export PATH="$PATH:$(go env GOPATH)/bin"
 ```
 ```shell
-protoc --go_out=server --go-grpc_out=server hello.proto
+protoc --go_out=server --go-grpc_out=require_unimplemented_servers=false:server hello.proto
 protoc --go_out=client --go-grpc_out=client hello.proto
 ```
