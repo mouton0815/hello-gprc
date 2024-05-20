@@ -2,18 +2,23 @@ syntax = "proto3";
 
 option go_package = "./internal";
 
-// The greeting service definition.
 service Greeter {
-  // Sends a greeting
-  rpc SayHello (HelloRequest) returns (HelloReply) {}
+  rpc SayHello(HelloRequest) returns (HelloReply) {}
+  rpc GetNames(NameRequest) returns (stream NameReply) {}
 }
 
-// The request message containing the user's name.
 message HelloRequest {
   string name = 1;
 }
 
-// The response message containing the greetings
 message HelloReply {
   string message = 1;
+}
+
+message NameRequest {
+  int32 count = 1;
+}
+
+message NameReply {
+  string name = 1;
 }
