@@ -1,7 +1,7 @@
 *.pb.*
 *_pb.*
 .idea
-client-node/node_modules/
-client-node/package-lock.json
-client-node/orders.*
-client-node/client.js
+client-nodejs/node_modules/
+client-nodejs/package-lock.json
+client-nodejs/orders.*
+client-nodejs/client.js

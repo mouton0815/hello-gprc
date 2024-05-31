@@ -43,3 +43,16 @@ The client accepts a minimum and maximum value for order dates
 ```shell
 go run client.go --mindate 200 --maxdate 300
 ```
+
+## Node.js
+For comparison, the project also comes with a Node.js client:
+```shell
+cd client-nodejs
+npm install
+npm start
+```
+The `npm start` command generates the stub, calls tsc, and runs the client.
+Command line arguments can be passed as follows:
+```shell
+npm start -- --mindate 200 --maxdate 300
+```
