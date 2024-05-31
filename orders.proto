@@ -1,0 +1,29 @@
+syntax = "proto3";
+
+option go_package = "./proto";
+
+service Orders {
+  rpc GetOrders(OrderRequest) returns (stream OrderResponse) {}
+}
+
+message OrderRequest {
+  int32 minDate = 1;
+  int32 maxDate = 2;
+}
+
+message OrderResponse {
+  int32 date = 1;
+  Address from = 2;
+  repeated OrderItem items = 3;
+}
+
+message Address {
+  string name = 1;
+  string city = 2;
+}
+
+message OrderItem {
+  string title = 1;
+  uint32 price = 2;
+}
+

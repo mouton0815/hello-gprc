@@ -23,19 +23,23 @@ See https://grpc.io/docs/languages/go/quickstart/ for more information.
 ## Code Generation
 
 ```shell
-protoc --go_out=server --go-grpc_out=require_unimplemented_servers=false:server hello.proto
-protoc --go_out=client --go-grpc_out=client hello.proto
+protoc --go_out=server-golang --go-grpc_out=require_unimplemented_servers=false:server-golang orders.proto
+protoc --go_out=client-golang --go-grpc_out=client-golang orders.proto
 ```
 
 ## Running
 Run the server:
 ```shell
-cd server
-go run main.go
+cd server-golang
+go run server.go orders.go
 ```
 
 Run the client (in another shell):
 ```shell
-cd client
-go run main.go
+cd client-golang
+go run client.go
+```
+The client accepts a minimum and maximum value for order dates
+```shell
+go run client.go -mindate 200 -maxdate 300
 ```
