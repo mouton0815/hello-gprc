@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"fmt"
 	"google.golang.org/grpc"
 	"grpc-go/main/proto"
@@ -9,6 +10,11 @@ import (
 )
 
 type OrdersServerImpl struct {
+}
+
+func (OrdersServerImpl) GetStats(_ context.Context, _ *proto.StatsRequest) (*proto.StatsResponse, error) {
+	log.Printf("Return order stats")
+	return &proto.StatsResponse{Count: uint32(len(ORDERS))}, nil
 }
 
 func (OrdersServerImpl) GetOrders(req *proto.OrderRequest, server proto.Orders_GetOrdersServer) error {

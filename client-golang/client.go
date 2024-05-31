@@ -15,11 +15,12 @@ import (
 
 func main() {
 	// Get command line arguments
-	var minDate = flag.Int("mindate", 0, "minimum order date")
-	var maxDate = flag.Int("maxdate", math.MaxInt32, "maximum order date")
+	minDate := flag.Int("mindate", 0, "minimum order date")
+	maxDate := flag.Int("maxdate", math.MaxInt32, "maximum order date")
 	flag.Parse()
 
-	conn, err := grpc.Dial("localhost:5005", grpc.WithTransportCredentials(insecure.NewCredentials()))
+	addr := "localhost:5005"
+	conn, err := grpc.NewClient(addr, grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
 		log.Fatalf("did not connect: %v", err)
 	}
@@ -31,10 +32,17 @@ func main() {
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
 	defer cancel()
 
-	// Fetch the orders stream from the server
+	// First retrieve the order stats
+	stats, err := client.GetStats(ctx, &proto.StatsRequest{})
+	if err != nil {
+		panic(fmt.Sprintf("Could not get stats: %v", err))
+	}
+	log.Printf("#Orders: %d", stats.Count)
+
+	// Next fetch the orders stream from the server
 	stream, err := client.GetOrders(ctx, &proto.OrderRequest{MinDate: int32(*minDate), MaxDate: int32(*maxDate)})
 	if err != nil {
-		panic(fmt.Sprintf("Could not stream: %v", err))
+		panic(fmt.Sprintf("Could not stream orders: %v", err))
 	}
 	for {
 		order, err := stream.Recv()

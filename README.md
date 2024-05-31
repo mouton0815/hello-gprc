@@ -1,7 +1,7 @@
-# Playing with gRPC and Go
+# Playing with gRPC
 A simple gRPC server and client that demonstrates
-* A basic request-response pattern (method `SayHello`)
-* A streaming response triggered by a unary request (method `GetNames`)
+* A basic request-response pattern (method `GetStats`)
+* A streaming response triggered by a unary request (method `GetOrders`)
 
 The streaming variant is a modification of the example used in the article
 [Implementing gRPC with Golang](https://medium.com/@josueparra2892/implementing-grpc-with-golang-71bd72a4561).
@@ -41,5 +41,5 @@ go run client.go
 ```
 The client accepts a minimum and maximum value for order dates
 ```shell
-go run client.go -mindate 200 -maxdate 300
+go run client.go --mindate 200 --maxdate 300
 ```
