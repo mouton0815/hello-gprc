@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"google.golang.org/grpc"
+	"grpc-go/main/data"
 	"grpc-go/main/proto"
 	"log"
 	"net"
@@ -14,13 +15,13 @@ type OrdersServerImpl struct {
 
 func (OrdersServerImpl) GetStats(_ context.Context, _ *proto.StatsRequest) (*proto.StatsResponse, error) {
 	log.Printf("Return order stats")
-	return &proto.StatsResponse{Count: uint32(len(ORDERS))}, nil
+	return &proto.StatsResponse{Count: uint32(len(data.ORDERS))}, nil
 }
 
 func (OrdersServerImpl) GetOrders(req *proto.OrderRequest, server proto.Orders_GetOrdersServer) error {
 	log.Printf("Start streaming orders from %d to %d", req.MinDate, req.MaxDate)
-	for i := 0; i < len(ORDERS); i++ {
-		var order = &ORDERS[i]
+	for i := 0; i < len(data.ORDERS); i++ {
+		var order = &data.ORDERS[i]
 		if order.Date >= req.MinDate && order.Date <= req.MaxDate {
 			if err := server.Send(order); err != nil {
 				log.Println("error generating response")

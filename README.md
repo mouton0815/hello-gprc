@@ -31,7 +31,7 @@ protoc --go_out=client-golang --go-grpc_out=client-golang orders.proto
 Run the server:
 ```shell
 cd server-golang
-go run server.go orders.go
+go run server.go
 ```
 
 Run the client (in another shell):
