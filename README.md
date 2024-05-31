@@ -45,14 +45,22 @@ go run client.go --mindate 200 --maxdate 300
 ```
 
 ## Node.js
-For comparison, the project also comes with a Node.js client:
+For comparison, the project also comes with a Node.js server and client.
+They are compatible with their Go counterparts.
+```shell
+cd server-nodejs
+npm install
+npm start
+```
+In another shell:
 ```shell
 cd client-nodejs
 npm install
 npm start
 ```
-The `npm start` command generates the stub, calls tsc, and runs the client.
-Command line arguments can be passed as follows:
+The `npm start` command generates the stub, calls `tsc`, and runs the server or client, respectively.
+
+Command line arguments can be passed to the client as follows:
 ```shell
 npm start -- --mindate 200 --maxdate 300
 ```

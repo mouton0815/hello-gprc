@@ -1,13 +1,12 @@
 {
-  "name": "client-node",
+  "name": "server-nodejs",
   "scripts": {
-    "start": "npm run build && node client.js",
-    "build": "npm run generate && tsc --esModuleInterop client.ts",
+    "start": "npm run build && node server.js",
+    "build": "npm run generate && tsc server.ts",
     "generate": "protoc --plugin=node_modules/.bin/protoc-gen-ts_proto --ts_proto_out=. --ts_proto_opt=outputServices=grpc-js --proto_path=.. orders.proto"
   },
   "dependencies": {
-    "@grpc/grpc-js": "^1.10.8",
-    "minimist": "^1.2.8"
+    "@grpc/grpc-js": "^1.10.8"
   },
   "devDependencies": {
     "ts-proto": "^1.176.1",
