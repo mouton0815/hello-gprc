@@ -22,8 +22,12 @@ See https://grpc.io/docs/languages/go/quickstart/ for more information.
 
 ## Code Generation
 
+Server:
 ```shell
 protoc --go_out=server-golang --go-grpc_out=require_unimplemented_servers=false:server-golang orders.proto
+```
+Client:
+```shell
 protoc --go_out=client-golang --go-grpc_out=client-golang orders.proto
 ```
 
